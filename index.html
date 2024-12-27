@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electricity Bill Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        input {
+            width: 100%;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Electricity Bill Calculator</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Appliance</th>
+                    <th>Power Rating (Watts)</th>
+                    <th>Daily Usage (Hours)</th>
+                    <th>Energy (kWh)</th>
+                    <th>Cost (₹)</th>
+                </tr>
+            </thead>
+            <tbody id="appliance-table">
+                <tr>
+                    <td><input type="text" value="Air Conditioner"></td>
+                    <td><input type="number" value="2000"></td>
+                    <td><input type="number" value="5"></td>
+                    <td class="energy">0</td>
+                    <td class="cost">0</td>
+                </tr>
+            </tbody>
+        </table>
+        <button onclick="addAppliance()">Add Appliance</button>
+        <h2>Total</h2>
+        <p>Energy: <span id="total-energy">0</span> kWh</p>
+        <p>Cost: ₹<span id="total-cost">0</span></p>
+    </div>
+    <script>
+        const ratePerUnit = 5;
+
+        function calculate() {
+            let totalEnergy = 0;
+            let totalCost = 0;
+
+            const rows = document.querySelectorAll("#appliance-table tr");
+            rows.forEach(row => {
+                const power = parseFloat(row.cells[1].querySelector("input").value) || 0;
+                const hours = parseFloat(row.cells[2].querySelector("input").value) || 0;
+
+                const energy = (power / 1000) * hours * 30; // Energy in kWh
+                const cost = energy * ratePerUnit;
+
+                row.querySelector(".energy").textContent = energy.toFixed(2);
+                row.querySelector(".cost").textContent = cost.toFixed(2);
+
+                totalEnergy += energy;
+                totalCost += cost;
+            });
+
+            document.getElementById("total-energy").textContent = totalEnergy.toFixed(2);
+            document.getElementById("total-cost").textContent = totalCost.toFixed(2);
+        }
+
+        function addAppliance() {
+            const table = document.getElementById("appliance-table");
+            const newRow = document.createElement("tr");
+            newRow.innerHTML = `
+                <td><input type="text"></td>
+                <td><input type="number"></td>
+                <td><input type="number"></td>
+                <td class="energy">0</td>
+                <td class="cost">0</td>
+            `;
+            table.appendChild(newRow);
+        }
+
+        document.querySelectorAll("input").forEach(input => input.addEventListener("input", calculate));
+        calculate();
+    </script>
+</body>
+</html>
